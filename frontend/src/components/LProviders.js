@@ -12,17 +12,6 @@ export default class LProviders extends Component {
     };
   }
 
-
-
-  shouldComponentUpdate(nextState) {
-    if(this.state.lProviderCount === nextState.lProviderCount-1) {
-      const newLProvider = nextState.lProviders[nextState.lProviderCount-1];
-      this.createNewLProvider(newLProvider, nextState.lProviderCount);
-      return true;
-    }
-    return false;
-  }
-
   render() {
     return (
     <div className='rightComponent lProviders'>

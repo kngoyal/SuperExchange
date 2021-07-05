@@ -66,8 +66,8 @@ export default class UserForm extends Component {
           'ETH Earned': 0,
           'Net Earning ($)': 0,
         };
-        await this.state.rows.push(row);
-        console.log('LProvider row pushed : ', this.state.rows);
+        await this.state.users.lProviders.push(row);
+        console.log('LProvider row pushed : ', this.state.users.lProviders);
     }
 
     addUser = (newUser) => {
