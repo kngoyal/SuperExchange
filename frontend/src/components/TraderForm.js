@@ -7,7 +7,6 @@ export default class TraderForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            ...this.props,
             newUser: {
                 userType: 'trader',
                 name: 'Your Name',
@@ -25,7 +24,7 @@ export default class TraderForm extends Component {
                 tokenSwap: key
             }
         }));
-        console.log('NEW USERFORM STATE ON CHANGE: ', this.state);
+        console.log('NEW USERFORM STATE ON CHANGE : ', this.state);
     }
 
     handleInputChange = event => {
@@ -37,13 +36,13 @@ export default class TraderForm extends Component {
                 [name]: value
             }
         }));
-        console.log('NEW USERFORM STATE ON CHANGE: ', this.state);
+        console.log('NEW USERFORM STATE ON CHANGE : ', this.state);
     };
 
     handleSubmit = event => {
         event.preventDefault();
-        console.log('NEW USERFORM STATE ON SUBMIT: ', this.state);
-        this.props.onSubmit(this.state.newUser);
+        console.log('NEW USERFORM STATE ON SUBMIT : ', this.state);
+        this.props.atSubmit(this.state.newUser);
     };
 
     render() {

@@ -33,7 +33,8 @@ export default class Portal extends Component {
         this.initializeSuperFluid().then(sf => {
           console.log('SUPERFLUID INITIALIZED sf : ', sf);
           var Flatted = require('flatted');
-          this.setState(prevState => ({ 
+          this.setState(prevState => ({
+            ...prevState,
             sf: Flatted.stringify(sf)
           }));
           // console.log('SUPERFLUID INITIALIZED this.state.sf ', this.state.sf);
@@ -71,7 +72,7 @@ export default class Portal extends Component {
 
   handleUserNew(users) {
     this.setState({
-      users: users
+      users
     });
     console.log('CALLBACK in Portal.js', this.state.users);
     console.log('New User added : ', this.state.users.newUser);

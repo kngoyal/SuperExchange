@@ -37,7 +37,7 @@ export default class UserForm extends Component {
                                 walletAddress: accounts[0]
                             }
                         }
-                    }), this.addUser(this.state.users.newUser));
+                    }), this.addUser);
                     console.log('New User after connecting wallet : ', this.state.users.newUser);
                     console.log('User has allowed account access to dApp...');
                 });
@@ -52,8 +52,8 @@ export default class UserForm extends Component {
         return false;
     }
 
-    createTrader(trader, traderId) {
-        console.log('I am already here');
+    createTrader = (trader, traderId) => {
+        console.log('Creating new TRADER');
         var newTrader = {
           'id': traderId, 
           'Name': trader.name, 
@@ -65,7 +65,6 @@ export default class UserForm extends Component {
           'streamRatePerSecond': trader.streamRatePerSecond,
           'timeElapsed': 0,
           'walletAddress': trader.walletAddress,
-          'fuckoff': 'fuckoff',
         };
         var newTraders = this.state.users.traders;
         newTraders.push(newTrader);
@@ -80,7 +79,8 @@ export default class UserForm extends Component {
         console.log('Trader row pushed after updating state : ', this.state.users.traders[traderId-1]);
     }
 
-    createLProvider(lProvider, lProviderId) {
+    createLProvider = (lProvider, lProviderId) => {
+        console.log('Creating new LPROVIDER');
         var newLProvider = {
           'id': lProviderId,
           'Name': lProvider.name,
@@ -103,7 +103,9 @@ export default class UserForm extends Component {
         console.log('LProvider row pushed : ', this.state.users.lProviders[lProviderId-1]);
     }
 
-    addUser = (newUser) => {
+    addUser = () => {
+        console.log('5 CALLBACK in UserForm.js', this.state);
+        var newUser = this.state.users.newUser;
         if (newUser.userType==='trader') {
             this.createTrader(newUser, this.state.users.traderCount+1);
             console.log('TRADERS : ', this.state.users.traderCount, this.state.users.traders);
@@ -114,20 +116,22 @@ export default class UserForm extends Component {
         }
     }
 
-    handleCallback(newUser) {
+    handleCallback = (newUser) => {
         console.log('1 CALLBACK in UserForm.js', this.state);
         this.setState((prevState) => ({
             users: {
                 ...prevState.users,
                 newUser: newUser
             }
-        }), this.connectWallet(newUser).then((res) => {
-            console.log('2 CALLBACK in UserForm.js', this.state);
-            if(res) {
-                console.log('OK wallet connected, now add user : ', newUser);
-                this.props.onChange(this.state.users);
-            }
-        }));
+        }), () => {
+            this.connectWallet(newUser).then((res) => {
+                console.log('2 CALLBACK in UserForm.js', this.state);
+                if(res) {
+                    console.log('OK wallet connected, now add user : ', newUser);
+                    this.props.onChange(this.state.users);
+                }
+            })
+        });
         console.log('4 CALLBACK in UserForm.js', this.state);
     }
 
@@ -137,10 +141,10 @@ export default class UserForm extends Component {
                 <h1 className='sectionTitle'> Stream Liquidity </h1>
                 <Tabs defaultActiveKey='trader' transition={false} id='uncontrolled-tab-example' onSelect={(key) => console.log(`HANDLING TAB EVENT : ${key} selected`)}>
                     <Tab eventKey='trader' title='Trader' unmountOnExit={true}>
-                        <TraderForm onSubmit={this.handleCallback}/>
+                        <TraderForm atSubmit={this.handleCallback}/>
                     </Tab>
                     <Tab eventKey='lProvider' title='Liquidity Provider' unmountOnExit={true}>
-                        <LProviderForm onSubmit={this.handleCallback}/>
+                        <LProviderForm atSubmit={this.handleCallback}/>
                     </Tab>
                 </Tabs>
             </div>
