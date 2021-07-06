@@ -8,13 +8,13 @@ export default class LPool extends Component {
     this.state = {
         ...this.props,
         rows: [
-            {'id': 1, 'Flow Rate': 'IN', 'DAI': 0, 'ETH': 0},
-            {'id': 2, 'Flow Rate': 'OUT', 'DAI': 0, 'ETH': 0},
+            {'id': 1, 'Flow Rate': 'IN', 'DAI': 0, 'USDC': 0},
+            {'id': 2, 'Flow Rate': 'OUT', 'DAI': 0, 'USDC': 0},
         ],
-        header: ['id', 'Flow Rate', 'DAI', 'ETH'],
+        header: ['id', 'Flow Rate', 'DAI', 'USDC'],
         headerLength: 4,
         feeDAI: 0,
-        feeETH: 0,
+        feeUSDC: 0,
     };
   }
 
@@ -30,7 +30,7 @@ export default class LPool extends Component {
     <div className='rightComponent lPool'>
       <h1 className='sectionTitle'> Liquidity Pool </h1>
       <Table name='lPool' rows={this.state.rows} header={this.state.header} headerLength={this.state.headerLength}/>
-      <h2 className='sectionTitle'> Net Fee Collected : {this.state.feeDAI} DAI + {this.state.feeETH} ETH</h2>
+      <h2 className='sectionTitle'> Net Fee Collected : {this.state.feeDAI} DAI + {this.state.feeUSDC} USDC</h2>
     </div>
     );
   }

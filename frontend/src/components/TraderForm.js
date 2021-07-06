@@ -11,22 +11,32 @@ export default class TraderForm extends Component {
             newUser: {
                 userType: 'trader',
                 name: 'Your Name',
-                streamRatePerHour: 'Stream Rate per Second',
-                tokenSwap: 'DAI → ETH',
+                streamRatePerSecond: 'Stream Rate per Second',
+                tokenSwap: 'DAI → USDC',
             }
         };
     }
 
     handleTabSelect = key => {
         console.log('HANDLING TAB EVENT : ', key);
-        this.setState({...this.setState, newUser: {...this.state.newUser, tokenSwap: key}});
+        this.setState((prevState) => ({
+            newUser: {
+                ...prevState.newUser, 
+                tokenSwap: key
+            }
+        }));
         console.log('NEW USERFORM STATE ON CHANGE: ', this.state);
     }
 
     handleInputChange = event => {
         console.log('HANDLING CHANGE EVENT : ', event);
         const {name, value} = event.target;
-        this.setState({...this.setState, newUser: {...this.state.newUser, [name]: value}});
+        this.setState((prevState) => ({
+            newUser: {
+                ...prevState.newUser, 
+                [name]: value
+            }
+        }));
         console.log('NEW USERFORM STATE ON CHANGE: ', this.state);
     };
 
@@ -41,12 +51,12 @@ export default class TraderForm extends Component {
             <form onSubmit={this.handleSubmit}>
                 <input className='inputText' style={{textAlign:'center'}} type='text' name='name' placeholder={this.state.newUser.name} onChange={this.handleInputChange} />
                 <Tabs 
-                    defaultActiveKey='DAI → ETH' transition={false} id='uncontrolled-tab-example' 
+                    defaultActiveKey='DAI → USDC' transition={false} id='uncontrolled-tab-example' 
                     onSelect={(k) => this.handleTabSelect(k)}>
-                    <Tab eventKey='DAI → ETH' title='DAI → ETH' unmountOnExit={true} />
-                    <Tab eventKey='ETH → DAI' title='ETH → DAI' unmountOnExit={true} />
+                    <Tab eventKey='DAI → USDC' title='DAI → USDC' unmountOnExit={true} />
+                    <Tab eventKey='USDC → DAI' title='USDC → DAI' unmountOnExit={true} />
                 </Tabs>
-                <input className='inputText' style={{textAlign:'center'}} type='text' name='streamRatePerHour' placeholder={this.state.newUser.streamRatePerHour} onChange={this.handleInputChange} />
+                <input className='inputText' style={{textAlign:'center'}} type='text' name='streamRatePerSecond' placeholder={this.state.newUser.streamRatePerSecond} onChange={this.handleInputChange} />
                 <input className='submitButton' type='submit' value='Start Streaming' />
             </form>
         );

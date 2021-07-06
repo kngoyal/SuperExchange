@@ -8,19 +8,20 @@ import LPool from '../components/LPool';
 import '../App.css';
 
 export default class Portal extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    console.log(window.localStorage);
     this.state = JSON.parse(window.localStorage.getItem('state')) || {
-      users: {
-        traders: [],
-        lProviders: [],
-        traderCount: 0,
-        lProviderCount: 0,
+      'users': {
+        'traders': [],
+        'lProviders': [],
+        'traderCount': 0,
+        'lProviderCount': 0,
       },
-      sf: undefined,
+      'sf': undefined,
     };
     console.log('this.state in CONSTRUCTOR in Portal.js : ', this.state);
-    this.handleCallback = this.handleCallback.bind(this);
+    this.handleUserNew = this.handleUserNew.bind(this);
   }
 
   componentDidMount() {
@@ -32,7 +33,9 @@ export default class Portal extends Component {
         this.initializeSuperFluid().then(sf => {
           console.log('SUPERFLUID INITIALIZED sf : ', sf);
           var Flatted = require('flatted');
-          this.setState({...this.state, sf: Flatted.stringify(sf)});
+          this.setState(prevState => ({ 
+            sf: Flatted.stringify(sf)
+          }));
           // console.log('SUPERFLUID INITIALIZED this.state.sf ', this.state.sf);
         });
       } catch (error) {
@@ -51,10 +54,11 @@ export default class Portal extends Component {
     console.log('INITIALIZING SUPERFLUID in Portal.js');
     const SuperfluidSDK = require('@superfluid-finance/js-sdk');
     const Web3 = require('web3');
-
+    
     const sf = new SuperfluidSDK.Framework({
         web3: new Web3(window.ethereum),
     });
+    
     await sf.initialize();
     return sf;
   }
@@ -65,24 +69,45 @@ export default class Portal extends Component {
     console.log('SUPERFLUID STORED UNFLATTENED sf : ', sf);
   }
 
-  handleCallback(users) {
-    this.setState({...this.state, users: users});
+  handleUserNew(users) {
+    this.setState({
+      users: users
+    });
     console.log('CALLBACK in Portal.js', this.state.users);
     console.log('New User added : ', this.state.users.newUser);
     this.getStoredSFSDK();
+  }
+
+  handleUserUpdate(userType, subUsers) {
+    if(userType==='trader') {
+      this.setState((prevState) => ({
+        users: {
+          ...prevState.users,
+          traders: subUsers,
+        }
+      }));
+    } else if(userType==='lProvider') {
+      this.setState((prevState) => ({
+        users: {
+          ...prevState.users,
+          lProviders: subUsers,
+        }
+      }));
+    }
+
   }
 
   render() {
     return (
       <div>
         <div className='rowComp'>
-          <UserForm users={this.state.users} onChange={this.handleCallback} />
+          <UserForm users={this.state.users} onChange={this.handleUserNew} />
           <LPool />
         </div>
         <br/>
         <div className='rowComp'>
-          <Traders traders={this.state.users.traders} traderCount={this.state.users.traderCount}/>
-          <LProviders lProviders={this.state.users.lProviders} lProviderCount={this.state.users.lProviderCount}/>
+          <Traders traders={this.state.users.traders} traderCount={this.state.users.traderCount} sf={this.state.sf} onChange={this.handleUserUpdate}/>
+          <LProviders lProviders={this.state.users.lProviders} lProviderCount={this.state.users.lProviderCount} onChange={this.handleUserUpdate}/>
         </div>
       </div>
     );

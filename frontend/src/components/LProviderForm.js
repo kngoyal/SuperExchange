@@ -11,14 +11,20 @@ export default class LProviderForm extends Component {
                 userType: 'lProvider',
                 name: 'Your Name',
                 DAIStreamRatePerSecond: 'DAI Stream Rate per Second',
-                ETHStreamRatePerSecond: 'ETH Stream Rate per Second',
+                USDCStreamRatePerSecond: 'USDC Stream Rate per Second',
             }
         };
     }
 
     handleInputChange = event => {
         const {name, value} = event.target;
-        this.setState({...this.setState, newUser: {...this.state.newUser, [name]: value}});
+        this.setState({
+            ...this.setState, 
+            newUser: {
+                ...this.state.newUser, 
+                [name]: value
+            }
+        });
         console.log('NEW USER STATE ON CHANGE: ', this.state);
     };
 
@@ -33,7 +39,7 @@ export default class LProviderForm extends Component {
             <form onSubmit={this.handleSubmit}>
                 <input className='inputText' style={{textAlign:'center'}} type='text' name='name' placeholder={this.state.newUser.name} onChange={this.handleInputChange} />
                 <input className='inputText' style={{textAlign:'center'}} type='text' name='DAIStreamRatePerSecond' placeholder={this.state.newUser.DAIStreamRatePerSecond} onChange={this.handleInputChange} />
-                <input className='inputText' style={{textAlign:'center'}} type='text' name='ETHStreamRatePerSecond' placeholder={this.state.newUser.ETHStreamRatePerSecond} onChange={this.handleInputChange} />
+                <input className='inputText' style={{textAlign:'center'}} type='text' name='USDCStreamRatePerSecond' placeholder={this.state.newUser.USDCStreamRatePerSecond} onChange={this.handleInputChange} />
                 <input className='submitButton' type='submit' value='Start Streaming' />
             </form>
         );
