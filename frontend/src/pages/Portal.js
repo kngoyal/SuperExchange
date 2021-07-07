@@ -15,12 +15,6 @@ export default function Portal() {
   const [lProviderCount, setLProviderCount] = useState(0);
   const [sf, setSF] = useState('');
 
-  useEffect(() => { 
-    console.log(traderCount, traders);
-    setTraders(traders);
-    setTraderCount(traderCount);
-  }, [traderCount, traders]);
-
   useEffect(() => {
     initializeSuperFluid().then(res => {
       setSF(res);
@@ -70,7 +64,7 @@ export default function Portal() {
       <br/>
       <div className='rowComp'>
         <Traders traderCount={traderCount} traders={traders} />
-        <LProviders lProviders={lProviders} />
+        <LProviders lProviderCount={lProviderCount} lProviders={lProviders} />
       </div>
     </div>
   );

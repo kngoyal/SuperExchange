@@ -17,7 +17,7 @@ export default function TraderForm({atSubmit}) {
             streamRatePerSecond: streamRatePerSecond,
             tokenSwap: tokenSwap,
         };
-        console.log('NEW USERFORM ON SUBMIT : ', newUser);
+        console.log('NEW TRADER FORM ON SUBMIT : ', newUser);
         atSubmit(newUser);
     };
 
