@@ -61,6 +61,7 @@ export default function UserForm({traderCount, lProviderCount, onChange}) {
           'timeElapsed': 0,
           'walletAddress': walletAddress,
           'userType': 'trader',
+          'tap': 'close',
         };
         setNewUser(newTrader);
         console.log(newTrader);
@@ -78,6 +79,7 @@ export default function UserForm({traderCount, lProviderCount, onChange}) {
           'Net Earning ($)': 0,
           'walletAddress': walletAddress,
           'userType': 'lProvider',
+          'tap': 'close',
         };
         setNewUser(newLProvider);
         console.log(newLProvider);

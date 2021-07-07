@@ -53,7 +53,7 @@ export default function Portal() {
       }
     },
     [],
-  );
+  )
 
   return (
     <div>
@@ -63,10 +63,9 @@ export default function Portal() {
       </div>
       <br/>
       <div className='rowComp'>
-        <Traders traderCount={traderCount} traders={traders} />
-        <LProviders lProviderCount={lProviderCount} lProviders={lProviders} />
+        <Traders sf={sf} traderCount={traderCount} traders={traders} />
+        <LProviders sf={sf} lProviderCount={lProviderCount} lProviders={lProviders} />
       </div>
     </div>
   );
-
 }

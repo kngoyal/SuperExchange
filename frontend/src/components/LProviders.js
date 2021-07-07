@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import Table from './Table';
 
-export default function LProviders({lProviderCount: parentLProviderCount, lProviders: parentLProviders}) {
+export default function LProviders({sf, lProviderCount: parentLProviderCount, lProviders: parentLProviders}) {
 
   const header = ['id', 'Name', 'DAI Stream Rate', 'USDC Stream Rate', 'DAI Earned', 'USDC Earned', 'Net Earning ($)'];
   const headerLength = 7;
