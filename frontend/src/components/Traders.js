@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useState, useEffect} from 'react';
 import Table from './Table';
 
 const tokenAddresses = {
@@ -7,19 +7,26 @@ const tokenAddresses = {
   contractAddress: '0x6744F9394B8bAdF42d0eAa28f1914148d1b247c1'
 };
 
-export default class Traders extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      ...this.props,
-      header: ['id', 'Name', 'Streaming Rate', 'Tokens Paid', 'Fee Paid ($)', 'Tokens Retrieved'],
-      headerLength: 6,
-      timeElapsed: 0,
-    };
-    console.log('TRADERS CONSTRUCTOR STATE : ', this.state);
-  }
+export default function Traders({traderCount: parentTraderCount, traders: parentTraders}) {
+  
+  const header = ['id', 'Name', 'Streaming Rate', 'Tokens Paid', 'Fee Paid ($)', 'Tokens Retrieved'];
+  const headerLength = 6;
 
-  async createTraderFlow(trader) {
+  const [traders, setTraders] = useState(parentTraders);
+  const [traderCount, setTraderCount] = useState(parentTraderCount);
+  const [timeElapsed, setTimElapsed] = useState(0);
+
+  useEffect(() => {
+    setTraders(parentTraders);
+    console.log(parentTraders);
+  }, [parentTraders]);
+
+  useEffect(() => {
+    setTraderCount(parentTraderCount);
+    console.log(parentTraderCount);
+  }, [parentTraderCount]);
+
+  const createTraderFlow = async(trader) => {
     console.log('CREATING TRADING FLOW for : ', trader);
     // create trading flow
     var sourceToken = tokenAddresses.daixAddress;
@@ -48,7 +55,7 @@ export default class Traders extends Component {
     // });
   }
 
-  async closeTraderFlow(trader) {
+  const closeTraderFlow = async(trader) => {
     console.log(`CLOSING TRADING FLOW for ${trader}`);
     // create trading flow
     var sourceToken = tokenAddresses.daixAddress;
@@ -77,10 +84,10 @@ export default class Traders extends Component {
     // });
   }
 
-  async updateTraders() {
-    for (let i=0; i<this.state.traderCount; i++) {
+  const updateTraders = async() => {
+    for (let i=0; i<this.state.traders.length(); i++) {
       if(this.state.traders[i].timeElapsed>9){
-        await this.closeTraderFlow(this.state.traders[i]);
+        await closeTraderFlow(this.state.traders[i]);
       } else {
         console.log(`Updating ${this.state.traders[i]}`);
         this.state.traders[i].timeElapsed += 5;
@@ -91,41 +98,23 @@ export default class Traders extends Component {
     }
   }
 
-  shouldComponentUpdate(nextState) {
-    console.log('SHOULD COMPONENT UPDATE : ', this.state, nextState);
-    if(this.state.traderCount === nextState.traderCount-1) {
-      const newTrader = nextState.traders[nextState.traderCount-1];
-      this.createTraderFlow(newTrader);
-      return true;
-    } else if(this.state.timeElapsed === nextState.timeElapsed+5) {
-      this.updateTraders();
-      return true;
-    }
-    return false;
-  }
-
-  componentDidUpdate(prevState) {
-    console.log('COMPONENT DID UPDATE STATE : ', this.state, prevState);
-    if(this.state.traderCount === prevState.traderCount+1) {
-      console.log('COMPONENT DID UPDATE STATE : ', this.state);
-    }
-  }
-
-  componentDidMount() {
-    console.log('COMPONENT DID MOUNT STATE : ', this.state);
-    // this.interval = setInterval(() => this.setState({timeElapsed: this.state.timeElapsed+5}), 5000);
-  }
-
-  // componentWillUnmount() {
-  //   clearInterval(this.interval);
+  // shouldComponentUpdate(nextState) {
+  //   console.log('SHOULD COMPONENT UPDATE : ', this.state, nextState);
+  //   if(this.state.traders.length === nextState.traders.length-1) {
+  //     const newTrader = nextState.traders[nextState.traders.length-1];
+  //     this.createTraderFlow(newTrader);
+  //     return true;
+  //   } else if(this.state.timeElapsed === nextState.timeElapsed+5) {
+  //     this.updateTraders();
+  //     return true;
+  //   }
+  //   return false;
   // }
   
-  render() {
-    return (
+  return (
     <div className='leftComponent traders'>
       <h1 className='sectionTitle'> Traders </h1>
-      <Table name='traders' rows={this.state.traders} header={this.state.header} headerLength={this.state.headerLength}/>
+      <Table name='traders' rows={traders} header={header} headerLength={headerLength}/>
     </div>
-    );
-  }
+  );
 }
