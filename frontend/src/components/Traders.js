@@ -8,7 +8,7 @@ const tokenAddresses = {
 };
 
 export default function Traders({traderCount: parentTraderCount, traders: parentTraders}) {
-  
+
   const header = ['id', 'Name', 'Streaming Rate', 'Tokens Paid', 'Fee Paid ($)', 'Tokens Retrieved'];
   const headerLength = 6;
 
@@ -85,31 +85,18 @@ export default function Traders({traderCount: parentTraderCount, traders: parent
   }
 
   const updateTraders = async() => {
-    for (let i=0; i<this.state.traders.length(); i++) {
-      if(this.state.traders[i].timeElapsed>9){
-        await closeTraderFlow(this.state.traders[i]);
+    for (let i=0; i<traderCount; i++) {
+      if(traders[i].timeElapsed>9){
+        await closeTraderFlow(traders[i]);
       } else {
-        console.log(`Updating ${this.state.traders[i]}`);
-        this.state.traders[i].timeElapsed += 5;
-        let value = this.state.traders[i].streamRatePerSecond*this.state.traders[i].timeElapsed;
-        this.state.traders[i]['Tokens Paid'] = this.state.traders[i].tokenSwap==='DAI → USDC' ? `${value} DAI` : `${value} USDC`;
-        this.state.traders[i]['Tokens Retrieved'] = this.state.traders[i].tokenSwap==='DAI → USDC' ? `${value} USDC` : `${value} DAI`;
+        console.log(`Updating ${traders[i]}`);
+        traders[i].timeElapsed += 5;
+        let value = traders[i].streamRatePerSecond*traders[i].timeElapsed;
+        traders[i]['Tokens Paid'] = traders[i].tokenSwap==='DAI → USDC' ? `${value} DAI` : `${value} USDC`;
+        traders[i]['Tokens Retrieved'] = traders[i].tokenSwap==='DAI → USDC' ? `${value} USDC` : `${value} DAI`;
       }
     }
   }
-
-  // shouldComponentUpdate(nextState) {
-  //   console.log('SHOULD COMPONENT UPDATE : ', this.state, nextState);
-  //   if(this.state.traders.length === nextState.traders.length-1) {
-  //     const newTrader = nextState.traders[nextState.traders.length-1];
-  //     this.createTraderFlow(newTrader);
-  //     return true;
-  //   } else if(this.state.timeElapsed === nextState.timeElapsed+5) {
-  //     this.updateTraders();
-  //     return true;
-  //   }
-  //   return false;
-  // }
   
   return (
     <div className='leftComponent traders'>

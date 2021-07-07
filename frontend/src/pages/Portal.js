@@ -8,57 +8,35 @@ import LPool from '../components/LPool';
 import '../App.css';
 
 export default function Portal() {
-  
+
   const [traders, setTraders] = useState([]);
   const [lProviders, setLProviders] = useState([]);
   const [traderCount, setTraderCount] = useState(0);
   const [lProviderCount, setLProviderCount] = useState(0);
+  const [sf, setSF] = useState('');
 
   useEffect(() => {
-    console.log(traderCount, traders);
-    setTraders(traders);
-    setTraderCount(traderCount);
-  }, [traderCount, traders]);
+    initializeSuperFluid().then(res => {
+      setSF(res);
+    });
+  }, []);
 
-  // const [sf, setSF] = useState();
+  useEffect(() => {
+    console.log(sf);
+  }, [sf]);
 
-  // componentDidMount() {
-  //   if (this.state.sf!==undefined) {
-  //     this.getStoredSFSDK();
-  //   }
-  //   else {
-  //     try {
-  //       this.initializeSuperFluid().then(sf => {
-  //         console.log('SUPERFLUID INITIALIZED sf : ', sf);
-  //         var Flatted = require('flatted');
-  //         setSF(Flatted.stringify(sf));
-  //         // console.log('SUPERFLUID INITIALIZED this.state.sf ', this.state.sf);
-  //       });
-  //     } catch (error) {
-  //       alert('Unable to initialize SUPERFLUID');
-  //       console.error(error);
-  //     }
-  //   }
-  // }
-
-  // async initializeSuperFluid() {
-  //   console.log('INITIALIZING SUPERFLUID in Portal.js');
-  //   const SuperfluidSDK = require('@superfluid-finance/js-sdk');
-  //   const Web3 = require('web3');
+  const initializeSuperFluid = async() => {
+    console.log('INITIALIZING SUPERFLUID in Portal.js');
+    const SuperfluidSDK = require('@superfluid-finance/js-sdk');
+    const Web3 = require('web3');
     
-  //   const sf = new SuperfluidSDK.Framework({
-  //       web3: new Web3(window.ethereum),
-  //   });
+    const sf = new SuperfluidSDK.Framework({
+        web3: new Web3(window.ethereum),
+    });
     
-  //   await sf.initialize();
-  //   return sf;
-  // }
-
-  // async getStoredSFSDK() {
-  //   var Flatted = require('flatted');
-  //   const sf = Flatted.parse(this.state.sf);
-  //   console.log('SUPERFLUID STORED UNFLATTENED sf : ', sf);
-  // }
+    await sf.initialize();
+    return sf;
+  }
 
   const handleNewUser = useCallback(
     (newUser) => {
@@ -73,28 +51,9 @@ export default function Portal() {
         setLProviderCount(lProviderCount => lProviderCount+1);
         console.log('NEW LPROVIDERS : ', lProviderCount, lProviders);
       }
-      // this.getStoredSFSDK();
     },
     [],
-  ); 
-
-  // handleUserUpdate(userType, subUsers) {
-  //   if(userType==='trader') {
-  //     this.setState((prevState) => ({
-  //       users: {
-  //         ...prevState.users,
-  //         traders: subUsers,
-  //       }
-  //     }));
-  //   } else if(userType==='lProvider') {
-  //     this.setState((prevState) => ({
-  //       users: {
-  //         ...prevState.users,
-  //         lProviders: subUsers,
-  //       }
-  //     }));
-  //   }
-  // }
+  );
 
   return (
     <div>
@@ -105,7 +64,7 @@ export default function Portal() {
       <br/>
       <div className='rowComp'>
         <Traders traderCount={traderCount} traders={traders} />
-        <LProviders lProviders={lProviders} />
+        <LProviders lProviderCount={lProviderCount} lProviders={lProviders} />
       </div>
     </div>
   );

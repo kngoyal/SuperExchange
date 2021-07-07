@@ -1,47 +1,32 @@
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 
 import '../App.css';
 
-export default class LProviderForm extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            ...this.props,
-            newUser: {
-                userType: 'lProvider',
-                name: 'Your Name',
-                DAIStreamRatePerSecond: 'DAI Stream Rate per Second',
-                USDCStreamRatePerSecond: 'USDC Stream Rate per Second',
-            }
-        };
-    }
+export default function LProviderForm({atSubmit}) {
 
-    handleInputChange = event => {
-        const {name, value} = event.target;
-        this.setState({
-            ...this.setState, 
-            newUser: {
-                ...this.state.newUser, 
-                [name]: value
-            }
-        });
-        console.log('NEW USER STATE ON CHANGE: ', this.state);
-    };
+    const [name, setName] = useState('Your Name');
+    const [DAIStreamRatePerSecond, setDAIStreamRatePerSecond] = useState('DAI Stream Rate per Second');
+    const [USDCStreamRatePerSecond, setUSDCStreamRatePerSecond] = useState('USDC Stream Rate per Second');
 
-    handleSubmit = event => {
+    const handleSubmit = event => {
         event.preventDefault();
-        console.log('NEW USERFORM STATE ON SUBMIT: ', this.state);
-        this.props.atSubmit(this.state.newUser);
+        var newUser = {
+            userType: 'lProvider',
+            name: name,
+            DAIStreamRatePerSecond: DAIStreamRatePerSecond,
+            USDCStreamRatePerSecond: USDCStreamRatePerSecond,
+        };
+        console.log('NEW LPROVIDER FORM ON SUBMIT : ', newUser);
+        atSubmit(newUser);
     };
 
-    render() {
-        return (
-            <form onSubmit={this.handleSubmit}>
-                <input className='inputText' style={{textAlign:'center'}} type='text' name='name' placeholder={this.state.newUser.name} onChange={this.handleInputChange} />
-                <input className='inputText' style={{textAlign:'center'}} type='text' name='DAIStreamRatePerSecond' placeholder={this.state.newUser.DAIStreamRatePerSecond} onChange={this.handleInputChange} />
-                <input className='inputText' style={{textAlign:'center'}} type='text' name='USDCStreamRatePerSecond' placeholder={this.state.newUser.USDCStreamRatePerSecond} onChange={this.handleInputChange} />
-                <input className='submitButton' type='submit' value='Start Streaming' />
-            </form>
-        );
-    }
+    return (
+        <form onSubmit={handleSubmit}>
+            <input className='inputText' style={{textAlign:'center'}} type='text' name='name' placeholder={name} onChange={e => setName(e.target.value)} />
+            <input className='inputText' style={{textAlign:'center'}} type='text' name='DAIStreamRatePerSecond' placeholder={DAIStreamRatePerSecond} onChange={e => setDAIStreamRatePerSecond(e.target.value)} />
+            <input className='inputText' style={{textAlign:'center'}} type='text' name='USDCStreamRatePerSecond' placeholder={USDCStreamRatePerSecond} onChange={e => setUSDCStreamRatePerSecond(e.target.value)} />
+            <input className='submitButton' type='submit' value='Start Streaming' />
+        </form>
+    );
+
 }
