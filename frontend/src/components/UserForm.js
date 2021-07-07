@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Tab, Tabs } from 'react-bootstrap';
 import Web3 from 'web3';
 
@@ -7,16 +7,21 @@ import LProviderForm from './LProviderForm';
 
 import '../App.css';
 
-export default class UserForm extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            ...this.props,
-        };
-        this.handleCallback = this.handleCallback.bind(this);
-    }
+export default function UserForm({traderCount, lProviderCount, onChange}) {
+    
+    const [newUser, setNewUser] = useState({});
+    const [walletAddress, setWalletAddress] = useState('');
 
-    connectWallet = async (newUser) => {
+    useEffect(() => {
+        setNewUser(prevUser => ({...prevUser, walletAddress: walletAddress}));
+    }, [walletAddress]);
+
+    useEffect(() => {
+        onChange(newUser);
+    }, [newUser]);
+
+    const connectWallet = async () => {
+        console.log('3');
         if (window.ethereum) {
             try {
                 await window.ethereum.request({
@@ -27,10 +32,9 @@ export default class UserForm extends Component {
                       }
                     ]
                 }).then((accounts) => {
-                    console.log('Connected Wallets :', accounts);
-                    this.setState({...this.state, users: {...this.state.users, newUser: {...newUser, walletAddress: accounts[0]}}});
-                    console.log('New User after connecting wallet : ', this.state.users.newUser);
-                    console.log('User has allowed account access to dApp...');
+                    console.log('Connected Wallets : ', accounts);
+                    setWalletAddress(accounts[0]);
+                    console.log('User has allowed account access to dApp...', walletAddress);
                 });
                 window.web3 = new Web3(window.ethereum);
                 return true;
@@ -38,83 +42,81 @@ export default class UserForm extends Component {
                 console.error('User has denied account access to dApp...');
             }
         } else {
-            alert("Please install MetaMask to use this dApp!");
+            alert('Please install MetaMask to use this dApp!');
         }
         return false;
     }
 
-    async createNewTrader(newTrader, traderId) {
-        var row = {
-          'id': traderId, 
-          'Name': newTrader.name, 
-          'Streaming Rate': newTrader.streamRatePerHour, 
-          'Tokens Paid' : newTrader.tokenSwap==='DAI → ETH' ? '0 DAI' : '0 ETH', 
+    const createTrader = (trader) => {
+        console.log('Creating new TRADER : ');
+        var newTrader = {
+          'id': traderCount+1, 
+          'Name': trader.name, 
+          'Streaming Rate': trader.streamRatePerSecond, 
+          'Tokens Paid': trader.tokenSwap==='DAI → USDC' ? '0 DAI' : '0 USDC', 
           'Fee Paid ($)': 0, 
-          'Tokens Retrieved': newTrader.tokenSwap==='DAI → ETH' ? '0 ETH' : '0 DAI', 
+          'Tokens Retrieved': trader.tokenSwap==='DAI → USDC' ? '0 USDC' : '0 DAI',
+          'tokenSwap': trader.tokenSwap,
+          'streamRatePerSecond': trader.streamRatePerSecond,
+          'timeElapsed': 0,
+          'walletAddress': walletAddress,
+          'userType': 'trader',
         };
-        await this.state.users.traders.push(row);
-        console.log('Trader row pushed : ', this.state.traders);
+        setNewUser(newTrader);
+        console.log(newTrader);
     }
 
-    async createNewLProvider(newLProvider, lProviderId) {
-        var row = {
-          'id': lProviderId,
-          'Name': newLProvider.name,
-          'DAI Stream Rate': newLProvider.DAIStreamRatePerSecond,
-          'ETH Stream Rate': newLProvider.ETHStreamRatePerSecond,
+    const createLProvider = (lProvider) => {
+        console.log('Creating new LPROVIDER : ');
+        var newLProvider = {
+          'id': lProviderCount+1,
+          'Name': lProvider.name,
+          'DAI Stream Rate': lProvider.DAIStreamRatePerSecond,
+          'USDC Stream Rate': lProvider.USDCStreamRatePerSecond,
           'DAI Earned': 0,
-          'ETH Earned': 0,
+          'USDC Earned': 0,
           'Net Earning ($)': 0,
+          'walletAddress': walletAddress,
+          'userType': 'lProvider',
         };
-        await this.state.rows.push(row);
-        console.log('LProvider row pushed : ', this.state.rows);
+        setNewUser(newLProvider);
+        console.log(newLProvider);
     }
 
-    addUser = (newUser) => {
+    const addUser = (newUser) => {
+        console.log('5', newUser);
         if (newUser.userType==='trader') {
-            this.createNewTrader(newUser, this.state.users.traderCount+1);
-            this.setState({...this.state, 
-                users: {...this.state.users,
-                    traderCount: this.state.users.traderCount+1,
-                }
-            });
-            console.log('TRADERS : ', this.state.users.traderCount, this.state.users.traders);
+            createTrader(newUser);
         }
         else if (newUser.userType==='lProvider') {
-            this.createNewLProvider(newUser, this.state.users.lProviderCount+1);
-            this.setState({...this.state, 
-                users: {...this.state.users,
-                    lProviderCount: this.state.users.lProviderCount+1,
-                }
-            });
-            console.log('LIQUIDITY PROVIDERS : ', this.state.users.lProviderCount, this.state.users.lProviders);
+            createLProvider(newUser);
         }
     }
 
-    handleCallback(newUser) {
-        this.setState({...this.state, users: {...this.state.users, newUser: newUser}});
-        console.log('CALLBACK in UserForm.js', this.state);
-        this.connectWallet(newUser).then((res) => {
-            if(res){
-                this.addUser(this.state.users.newUser);
-                this.props.onChange(this.state.users);
+    const handleCallback = (newUser) => {
+        console.log('1');
+        console.log('New User before connecting wallet : ', newUser);
+        connectWallet().then((res) => {
+            console.log('2');
+            if(res) {
+                console.log('4');
+                console.log('OK wallet connected, now add user : ', newUser);
+                addUser(newUser);
             }
         });
     }
 
-    render() {
-        return (
-            <div className='leftComponent userInput'>
-                <h1 className='sectionTitle'> Stream Liquidity </h1>
-                <Tabs defaultActiveKey='trader' transition={false} id='uncontrolled-tab-example' onSelect={(key) => console.log(`HANDLING TAB EVENT : ${key} selected`)}>
-                    <Tab eventKey='trader' title='Trader' unmountOnExit={true}>
-                        <TraderForm onSubmit={this.handleCallback}/>
-                    </Tab>
-                    <Tab eventKey='lProvider' title='Liquidity Provider' unmountOnExit={true}>
-                        <LProviderForm onSubmit={this.handleCallback}/>
-                    </Tab>
-                </Tabs>
-            </div>
-        );
-    }
+    return (
+        <div className='leftComponent userInput'>
+            <h1 className='sectionTitle'> Stream Liquidity </h1>
+            <Tabs defaultActiveKey='trader' transition={false} id='uncontrolled-tab-example' onSelect={(key) => console.log(`HANDLING TAB EVENT : ${key} selected`)}>
+                <Tab eventKey='trader' title='Trader' unmountOnExit={true}>
+                    <TraderForm atSubmit={handleCallback}/>
+                </Tab>
+                <Tab eventKey='lProvider' title='Liquidity Provider' unmountOnExit={true}>
+                    <LProviderForm atSubmit={handleCallback}/>
+                </Tab>
+            </Tabs>
+        </div>
+    );
 }

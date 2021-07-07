@@ -1,46 +1,46 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react'
 
-export default class Table extends Component {
-    constructor(props) {
-        super(props) //since we are extending class Table so we have to use super in order to override Component class constructor
-        this.state = {
-            ...this.props,
-        };
-    }
+export default function Table({name, rows: parentRows, header, headerLength}) {
 
-   renderTableData() {
-        return this.state.rows.map((row, index) => {
+    const [rows, setRows] = useState(parentRows);
+
+    useEffect(() => {
+        console.log(parentRows);
+        setRows(parentRows);
+        }, [parentRows]);
+
+
+   const renderTableData = (rows) => {
+        return rows.map((row, index) => {
             var rowArray = [];
 
-            for (var i=1; i<this.state.headerLength; i++) {
-                rowArray.push(<td key={this.state.name+'-col-'+i}>{row[this.state.header[i]]}</td>)
+            for (var i=1; i<headerLength; i++) {
+                rowArray.push(<td key={name+'-col-'+i}>{row[header[i]]}</td>)
             }
             return (
-                <tr key={this.state.name+'-row-'+index}>
+                <tr key={name+'-row-'+index}>
                     {rowArray}
                 </tr>
             )
         })
     }
 
-    renderTableHeader() {
-        let header = this.state.header.slice(1, this.state.headerLength);
-        return header.map((key, index) => {
-           return <th key={this.state.name+'-'+key+'-'+index}>{key}</th>
+    const renderTableHeader = (rows) => {
+        let renderHeader = header.slice(1, headerLength);
+        return renderHeader.map((key, index) => {
+           return <th key={name+'-'+key+'-'+index}>{key}</th>
         })
-     }
+    }
   
-     render() {
-        return (
-           <div>
-              <table id="table" key={this.state.name}>
-                 <tbody key={this.state.name+'-table'}>
-                    <tr key={this.state.name+'-header'}>{this.renderTableHeader()}</tr>
-                    {this.renderTableData()}
-                 </tbody>
-              </table>
-           </div>
-        )
-     }
+    return (
+        <div>
+            <table id="table" key={name}>
+                <tbody key={name+'-table'}>
+                <tr key={name+'-header'}>{renderTableHeader(rows)}</tr>
+                {renderTableData(rows)}
+                </tbody>
+            </table>
+        </div>
+    )
 }
 
