@@ -31,7 +31,7 @@ export default function Table({name, rows: parentRows, header, headerLength}) {
            return <th key={name+'-'+key+'-'+index}>{key}</th>
         })
     }
-  
+    
     return (
         <div>
             <table id="table" key={name}>
